@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <VirtualSystemCollection id="vApp_cicd">
+      <Info>A collection of virtual machines</Info>
+      <Name>vApp_cicd</Name>
+      <StartupSection>
+          <Info>VApp startup section</Info>
+          <Item stopDelay="0" stopAction="powerOff" startDelay="0" startAction="powerOn" order="0" id="jenkinsslave"/>
+      </StartupSection>
+      <VirtualSystem id="jenkinsslave">
+          <Info>A virtual machine</Info>
+          <Name>jenkinsslave2</Name>
+          <VirtualHardwareSection transport="">
+              <Info>Virtual hardware requirements</Info>
+              <System>
+                  <ElementName>Virtual Hardware Family</ElementName>
+              </System>
+              <Item>
+                  <AddressOnParent>0</AddressOnParent>
+              </Item>
+              <Item>
+                  <Description>SCSI Controller</Description>
+              </Item>
+          </VirtualHardwareSection>
+          <GuestCustomizationSection required="false">
+              <Info>Specifies Guest OS Customization Settings</Info>
+          </GuestCustomizationSection>
+       </VirtualSystem>
+  </VirtualSystemCollection>

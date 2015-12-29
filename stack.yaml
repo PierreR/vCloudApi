@@ -1,5 +1,6 @@
 flags: {}
 packages:
 - '.'
-extra-deps: []
-resolver: lts-3.19
+extra-deps: 
+- xml-html-conduit-lens-0.3.2.1
+resolver: lts-3.20

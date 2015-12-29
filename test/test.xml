@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ovf:Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_VirtualSystemSettingData.xsd http://www.vmware.com/schema/ovf http://www.vmware.com/schema/ovf http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1.5 http://c.irisnet.be/api/v1.5/schema/master.xsd http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_ResourceAllocationSettingData.xsd">
+    <ovf:VirtualSystemCollection id="vApp_cicd">
+        <ovf:Info>A collection of virtual machines</ovf:Info>
+        <ovf:Name>vApp_cicd</ovf:Name>
+        <ovf:StartupSection>
+            <ovf:Info>VApp startup section</ovf:Info>
+        </ovf:StartupSection>
+        <ovf:VirtualSystem ovf:id="jenkinsslave">
+            <ovf:Info>A virtual machine</ovf:Info>
+            <ovf:Name>jenkinsslave</ovf:Name>
+            <ovf:OperatingSystemSection ovf:id="101" vmw:osType="centos64Guest">
+                <ovf:Info>Specifies the operating system installed</ovf:Info>
+            </ovf:OperatingSystemSection>
+            <ovf:VirtualHardwareSection ovf:transport="">
+                <ovf:Info>Virtual hardware requirements</ovf:Info>
+                <ovf:Item>
+                    <rasd:Address>1</rasd:Address>
+                    <rasd:Description>IDE Controller</rasd:Description>
+                    <rasd:ResourceType>5</rasd:ResourceType>
+                </ovf:Item>
+                <ovf:Item>
+                    <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                    <rasd:Parent>100</rasd:Parent>
+                </ovf:Item>
+                <vmw:Config vmw:value="false" vmw:key="cpuHotAddEnabled" ovf:required="false"/>
+            </ovf:VirtualHardwareSection>
+            <vcloud:GuestCustomizationSection ovf:required="false">
+                <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+                <vcloud:Enabled>true</vcloud:Enabled>
+            </vcloud:GuestCustomizationSection>
+        </ovf:VirtualSystem>
+    </ovf:VirtualSystemCollection>
+</ovf:Envelope>
