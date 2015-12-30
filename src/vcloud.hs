@@ -1,8 +1,8 @@
+{-# LANGUAGE RankNTypes      #-}
 {-# LANGUAGE RecordWildCards #-}
 module Main  where
 
-import           Control.Lens            (ix, only, (%~), (&), (...), (.~),
-                                          (?~), (^.), (^..))
+import           Control.Lens
 import           Data.ByteString         (ByteString)
 import qualified Data.ByteString.Lazy    as LB
 import           Data.Monoid
@@ -14,14 +14,17 @@ import qualified Network.Wreq.Session    as S
 import           Text.Xml.Lens
 
 import           Option
-import Utils
+import           Utils
 import           VCloud.Namespace
 
 vCloudURL = "https://c.irisnet.be/api"
 vCloudVers = "1.5"
-vAppQueryPath id = "/vApp/vapp-" <> id <>"/ovf"
 loginPath = vCloudURL <> "/login"
 
+-- | we only query inside one vApp
+vAppQueryPath id = "/vApp/vapp-" <> id <>"/ovf"
+
+-- | Given a user, a pass and a vApp id, return the raw xml response lazily.
 vCloudSession :: ByteString -> ByteString -> String -> IO LB.ByteString
 vCloudSession user pass appid =
   S.withSessionControl (Just (HTTP.createCookieJar [])) ignoreTLSCertificatesSettings $ \sess -> do
@@ -31,8 +34,13 @@ vCloudSession user pass appid =
     r <- S.getWith opts sess apiPath
     return $ r ^. responseBody
 
+fetchVM :: AsXmlDocument t => Text -> Traversal' t Element
+fetchVM n = xml...ovfNode "VirtualSystem".attributed (ix (nsName ovfNS "id").only n)
+
+fetchIP :: Traversal' Element Element
+fetchIP = vcloudNode "NetworkConnectionSection"...vcloudNode "IpAddress"
 
 main = do
   Options {..} <- cmdOpts
   raw <- vCloudSession vCloudUser vCloudPass vAppId
-  print $ raw ^. xml...ovfNode "VirtualSystem".attributed (ix (nsName ovfNS "id").only "jenkinsslave2").vcloudNode "NetworkConnectionSection"...vcloudNode "IpAddress".text
+  print $ raw ^. fetchVM "jenkinsslave2".fetchIP.text

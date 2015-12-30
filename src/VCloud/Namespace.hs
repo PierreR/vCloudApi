@@ -10,9 +10,9 @@ module VCloud.Namespace
 where
 
 import           Control.Lens
-import           Text.XML      (Name(Name))
+import           Data.Text     (Text)
+import           Text.XML      (Name (Name))
 import           Text.Xml.Lens
-import           Data.Text               (Text)
 
 
 vcloudNS = "http://www.vmware.com/vcloud/v1.5"
