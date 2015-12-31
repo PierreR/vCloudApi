@@ -1,9 +1,12 @@
+{-# LANGUAGE LambdaCase      #-}
 {-# LANGUAGE RankNTypes      #-}
 {-# LANGUAGE RecordWildCards #-}
 module Main  where
 
+import           Control.Concurrent      (threadDelay)
 import           Control.Lens
 import           Data.ByteString         (ByteString)
+import qualified Data.ByteString.Char8   as BC
 import qualified Data.ByteString.Lazy    as LB
 import           Data.Monoid
 import           Data.Text               (Text)
@@ -47,4 +50,14 @@ main = do
     raw0 <- S.getWith opts sess (vAppQueryPath vAppId)
     let vmId = raw0 ^. responseBody . fetchVM vmName . fetchVmId.text
     raw1 <- S.postWith opts sess (vmQueryPath (Text.unpack vmId) <> "/action/" <> vmAction) LB.empty
-    print raw1
+    print $ raw1 ^. responseStatus.statusMessage
+    let taskLink = raw1 ^. responseHeader "Location"
+        actionStatus n  = putStrLn "Waiting for status"
+                          *> threadDelay (n*1000*1000)
+                          *> do
+                             r <- S.getWith opts sess (BC.unpack taskLink)
+                             case r ^. responseBody .xml.attr "status" of
+                               Just "success" -> putStrLn "success"
+                               Just "running" -> actionStatus 10
+                               _              -> putStrLn "fails"
+    actionStatus 10
