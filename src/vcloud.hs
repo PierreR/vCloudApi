@@ -7,6 +7,7 @@ import           Data.ByteString         (ByteString)
 import qualified Data.ByteString.Lazy    as LB
 import           Data.Monoid
 import           Data.Text               (Text)
+import qualified Data.Text               as Text
 import qualified Network.HTTP.Client     as HTTP
 import qualified Network.HTTP.Client.TLS as TLS
 import           Network.Wreq
@@ -19,28 +20,31 @@ import           VCloud.Namespace
 
 vCloudURL = "https://c.irisnet.be/api"
 vCloudVers = "1.5"
+
+loginPath :: String
 loginPath = vCloudURL <> "/login"
 
 -- | we only query inside one vApp
-vAppQueryPath id = "/vApp/vapp-" <> id <>"/ovf"
+vAppQueryPath id = vCloudURL <> "/vApp/vapp-" <> id <>"/ovf"
 
--- | Given a user, a pass and a vApp id, return the raw xml response lazily.
-vCloudSession :: ByteString -> ByteString -> String -> IO LB.ByteString
-vCloudSession user pass appid =
-  S.withSessionControl (Just (HTTP.createCookieJar [])) ignoreTLSCertificatesSettings $ \sess -> do
-    let opts = defaults & header "Accept" .~ ["application/*+xml;version=" <> vCloudVers]
-        apiPath = vCloudURL <> vAppQueryPath appid
-    _ <- S.getWith (opts & auth ?~ basicAuth user pass) sess loginPath
-    r <- S.getWith opts sess apiPath
-    return $ r ^. responseBody
+-- | query a specific virtual machine
+vmQueryPath id = vCloudURL <> "/vApp/vm-" <> id
 
 fetchVM :: AsXmlDocument t => Text -> Traversal' t Element
 fetchVM n = xml...ovfNode "VirtualSystem".attributed (ix (nsName ovfNS "id").only n)
+
+fetchVmId :: Traversal' Element Element
+fetchVmId = vcloudNode "GuestCustomizationSection" .vcloudNode "VirtualMachineId"
 
 fetchIP :: Traversal' Element Element
 fetchIP = vcloudNode "NetworkConnectionSection"...vcloudNode "IpAddress"
 
 main = do
   Options {..} <- cmdOpts
-  raw <- vCloudSession vCloudUser vCloudPass vAppId
-  print $ raw ^. fetchVM "jenkinsslave2".fetchIP.text
+  S.withSessionControl (Just (HTTP.createCookieJar [])) ignoreTLSCertificatesSettings $ \sess -> do
+    let opts = defaults & header "Accept" .~ ["application/*+xml;version=" <> vCloudVers]
+    _ <- S.getWith (opts & auth ?~ basicAuth vCloudUser vCloudPass) sess loginPath
+    raw0 <- S.getWith opts sess (vAppQueryPath vAppId)
+    let vmId = raw0 ^. responseBody . fetchVM vmName . fetchVmId.text
+    raw1 <- S.postWith opts sess (vmQueryPath (Text.unpack vmId) <> "/action/" <> vmAction) LB.empty
+    print raw1
