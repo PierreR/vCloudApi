@@ -11,9 +11,8 @@ where
 
 import           Control.Lens
 import           Data.Text     (Text)
-import           Text.XML      (Name (Name))
+import           Text.XML      (Prologue (Prologue), Document (Document), Name (Name))
 import           Text.Xml.Lens
-
 
 vcloudNS = "http://www.vmware.com/vcloud/v1.5"
 ovfNS = "http://schemas.dmtf.org/ovf/envelope/1"

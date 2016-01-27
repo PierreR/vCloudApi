@@ -3,4 +3,4 @@ packages:
 - '.'
 extra-deps:
 - xml-html-conduit-lens-0.3.2.1
-resolver: lts-4.0
+resolver: lts-5.0
