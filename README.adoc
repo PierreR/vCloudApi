@@ -4,9 +4,8 @@ image:https://travis-ci.org/PierreR/vCloudApi.svg?branch=master ["Build Status",
 
 .Basic usage:
 ```
-Usage: vcloud [-h|--vCloudURL ARG] (-u|--user ARG) (-p|--password ARG)
-              [-q|--vAppId ARG] [-n|--vmName ARG] (-a|--vmAction ARG)
-  VCloud APIs command line wrapper
+vcloud [-h|--vCloudURL ARG] (-u|--user ARG) (-p|--password ARG)
+       [-q|--vAppId ARG] [-n|--vmName ARG] (-a|--vmAction ARG)
 
 ```
 
