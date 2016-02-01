@@ -43,7 +43,6 @@ fetchVmId = vcloudNode "GuestCustomizationSection" .vcloudNode "VirtualMachineId
 fetchIP :: Traversal' Element Element
 fetchIP = vcloudNode "NetworkConnectionSection"...vcloudNode "IpAddress"
 
-
 main = do
   Options {..} <- cmdOpts
   S.withSessionControl (Just (HTTP.createCookieJar [])) ignoreTLSCertificatesSettings $ \sess -> do
@@ -51,8 +50,9 @@ main = do
     _ <- S.getWith (opts & auth ?~ basicAuth vCloudUser vCloudPass) sess loginPath
     raw0 <- S.getWith opts sess (vAppQueryPath vAppId)
     let vmId = raw0 ^. responseBody . fetchVM vmName . fetchVmId.text
-    payload <- lookupPayload vmAction
-    raw1 <- S.postWith opts sess (vmQueryPath (Text.unpack vmId) <> "/action/" <> vmAction) payload
+    (contentType, payload) <- lookupPayload vmAction
+    let postOpts = maybe opts (\x -> opts & header "Content-Type" .~ [x]) contentType
+    raw1 <- S.postWith postOpts sess (vmQueryPath (Text.unpack vmId) <> "/action/" <> vmAction) payload
     print $ raw1 ^. responseStatus.statusMessage
     let taskLink = raw1 ^. responseHeader "Location"
         actionStatus n  = putStrLn "Waiting for status"
