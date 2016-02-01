@@ -7,7 +7,8 @@ import qualified Data.Text             as Text
 import           Options.Applicative
 
 data Options = Options
-    { vCloudUser :: ByteString
+    { vCloudURL  :: String
+    , vCloudUser :: ByteString
     , vCloudPass :: ByteString
     , vAppId     :: String
     , vmName     :: Text
@@ -16,7 +17,12 @@ data Options = Options
 
 options :: Parser Options
 options = Options
-    <$> ( BC.pack <$> strOption
+    <$> strOption
+        (long "vCloudURL"
+        <> short 'h'
+        <> help "VCloud base URL"
+        <> value "https://c.irisnet.be")
+    <*> ( BC.pack <$> strOption
         (  long "user"
         <> short 'u'
         <> help "Your user name and org ex.: myuser@cirb-test"))

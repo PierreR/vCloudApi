@@ -1,3 +1,20 @@
 = vCloudApi
 
 image:https://travis-ci.org/PierreR/vCloudApi.svg?branch=master ["Build Status", link="https://travis-ci.org/PierreR/vCloudApi"]
+
+.Basic usage:
+```
+Usage: vcloud [-h|--vCloudURL ARG] (-u|--user ARG) (-p|--password ARG)
+              [-q|--vAppId ARG] [-n|--vmName ARG] (-a|--vmAction ARG)
+  VCloud APIs command line wrapper
+
+```
+
+== Supported actions
+
+- revertToCurrentSnapshot
+- createSnapshot
+
+== Current limitation
+
+- The executable only queries within one vApp. You specify the vAppId with the `-q` parameter.

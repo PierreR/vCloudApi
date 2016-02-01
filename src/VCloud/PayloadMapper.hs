@@ -18,7 +18,7 @@ createSnapshotXml :: Document
 createSnapshotXml = createXml $
    Element "CreateSnapshotParams" (Map.fromList [("xmlns", vcloudNS), ("name", "cicd-vcloudapi")])
            [H.xml|
-             <description>
+             <Description>
            |]
 
 payloads :: Map String (Maybe ByteString, LB.ByteString)
