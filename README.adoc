@@ -3,16 +3,22 @@
 image:https://travis-ci.org/PierreR/vCloudApi.svg?branch=master ["Build Status", link="https://travis-ci.org/PierreR/vCloudApi"]
 
 .Basic usage:
+
 ```
 vcloud [-h|--vCloudURL ARG] (-u|--user ARG) (-p|--password ARG)
-       [-q|--vAppId ARG] [-n|--vmName ARG] (-a|--vmAction ARG)
+       (-q|--vAppId ARG) (-n|--vmName ARG) (-a|--vmAction ARG)
+```
 
+.Example:
+```
+vcloud -h 'https://c.vcloud.com' -u username -p pass -q c1ce1ecb-af39-41d3-ac9c-21deecb4e33b -n pgserver -a createSnapshot
 ```
 
 == Supported actions
 
 - revertToCurrentSnapshot
 - createSnapshot
+
 
 == Current limitation
 
