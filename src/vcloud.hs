@@ -55,13 +55,5 @@ main = do
     raw1 <- S.postWith postOpts sess actionUri payload
     print $ raw1 ^. responseStatus.statusMessage
     let taskLink = raw1 ^. responseHeader "Location"
-        waitSuccess n  = putStrLn "Waiting for status"
-                          *> threadDelay (n*1000*1000)
-                          *> do
-                             r <- S.getWith opts sess (BC.unpack taskLink)
-                             case r ^. responseBody .xml.attr "status" of
-                               Just "success" -> putStrLn "success"
-                               Just "running" -> waitSuccess n
-                               _              -> putStrLn "fails"
     -- wait for a success return code
-    waitSuccess 12
+    waitTask 12 (S.getWith opts sess (BC.unpack taskLink))
