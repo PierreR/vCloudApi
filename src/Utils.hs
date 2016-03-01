@@ -37,7 +37,7 @@ waitTask sec action = do
   where
     continue = empty
     -- asum will strive for the first non empty value
-    -- that's why return one would exit the loop
+    -- that's why returning one would exit the loop
     -- As a note, compare this with forever ... which would have the opposite behavior
     -- `runMaybeT . forever` would exit whenever empty is encountered.
     exit = return
