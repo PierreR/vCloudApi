@@ -35,7 +35,6 @@ waitTask sec action = do
     Just msg -> putStrLn msg
     Nothing  -> putStrLn "Failure. Didn't receive a success status after 10 attempts "
   where
-    continue :: MaybeT IO String
     continue = empty
     -- asum will strive for the first non empty value
     -- that's why return one would exit the loop
