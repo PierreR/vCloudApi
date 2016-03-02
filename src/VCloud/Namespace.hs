@@ -9,10 +9,10 @@ module VCloud.Namespace
 )
 where
 
-import           Control.Lens
-import           Data.Text     (Text)
-import           Text.XML      (Prologue (Prologue), Document (Document), Name (Name))
-import           Text.Xml.Lens
+import qualified Text.XML       as XML
+import qualified Text.Xml.Lens  as XML
+
+import           VCloud.Prelude
 
 vcloudNS = "http://www.vmware.com/vcloud/v1.5"
 ovfNS = "http://schemas.dmtf.org/ovf/envelope/1"
@@ -24,7 +24,7 @@ ovfNode :: Text -> Traversal' Element Element
 ovfNode = nsNode ovfNS
 
 nsNode :: Text -> Text -> Traversal' Element Element
-nsNode ns n = node $ nsName ns n
+nsNode ns n = XML.node $ nsName ns n
 
-nsName :: Text -> Text -> Name
-nsName ns n = Name n (Just ns) Nothing
+nsName :: Text -> Text -> XML.Name
+nsName ns n = XML.Name n (Just ns) Nothing

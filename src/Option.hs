@@ -1,10 +1,11 @@
 module Option where
 
-import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as BC
-import           Data.Text             (Text)
 import qualified Data.Text             as Text
+
 import           Options.Applicative
+
+import           VCloud.Prelude
 
 data Options = Options
     { vCloudURL  :: String
