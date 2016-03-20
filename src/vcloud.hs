@@ -1,18 +1,17 @@
 {-# LANGUAGE RankNTypes      #-}
-{-# LANGUAGE RecordWildCards #-}
 module Main  where
 
 import qualified Data.ByteString.Char8   as BC
 import qualified Data.Text               as Text
+import qualified Data.Text.Encoding      as Text
 import qualified Network.HTTP.Client     as HTTP
-import qualified Network.HTTP.Client.TLS as TLS
 import qualified Network.Wreq.Session    as S
 
 import           Network.Wreq
 import           Text.Xml.Lens
 
-import           Option
 import           Utils
+import           Option
 import           VCloud.Namespace
 import           VCloud.PayloadMapper
 import           VCloud.Prelude
@@ -29,7 +28,7 @@ fetchIP :: Traversal' Element Element
 fetchIP = vcloudNode "NetworkConnectionSection"...vcloudNode "IpAddress"
 
 main = do
-  Options {..} <- cmdOpts
+  Option {..} <- getOption
   let apiUrl = vCloudURL <> "/api"
       loginPath = apiUrl <> "/login"
       -- we only query inside one vApp
@@ -40,7 +39,7 @@ main = do
     -- check action
     (contentType, payload) <- lookupPayload vmAction
     -- login
-    _ <- S.getWith (opts & auth ?~ basicAuth vCloudUser vCloudPass) sess loginPath
+    _ <- S.getWith (opts & auth ?~ basicAuth (Text.encodeUtf8 vCloudUser) (Text.encodeUtf8 vCloudPass)) sess loginPath
     -- Get raw xml info about our vApp
     raw0 <- S.getWith opts sess vAppQueryPath
     let vmId = raw0 ^. responseBody . fetchVM vmName . fetchVmId.text
