@@ -2,7 +2,9 @@ module Utils where
 
 import qualified Network.HTTP.Client     as HTTP
 import qualified Network.HTTP.Client.TLS as TLS
+import qualified Data.Yaml as Y
 
+import           System.Posix (fileExist)
 import           Network.Wreq
 import           Text.Xml.Lens
 
@@ -43,3 +45,18 @@ createXml el = Document simplePrologue el []
   where
     -- '<?xml version=\"1.0\" encoding=\"UTF-8\"?>'
     simplePrologue = Prologue [] Nothing []
+
+-- | Read a yaml file and throw a runtime error if the parsing fails
+loadYamlFile :: Y.FromJSON a =>  FilePath -> IO a
+loadYamlFile fp = do
+  -- p <- fileExist fp
+  -- guard p
+  Y.decodeFileEither fp >>= \case
+    Left rr -> error ("Error when parsing " ++ fp ++ ": " ++ show rr)
+    Right x -> return x
+
+-- | In case of a Left value, print the error and exit immediately
+foldEither :: Show e => Either e a -> IO a
+foldEither = either exit return
+    where
+      exit = \err -> print err >> exitFailure

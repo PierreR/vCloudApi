@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                vcloudapi
-version:             0.1.1.0
+version:             0.1.2.0
 license-file:        LICENSE
 author:              Pierre Radermecker
 maintainer:          pierrer@pi3r.be
@@ -16,10 +16,11 @@ executable vcloud
   default-language: Haskell2010
   hs-source-dirs:      src
   main-is:             vcloud.hs
-  default-extensions:  OverloadedStrings, NoImplicitPrelude
+  default-extensions:  OverloadedStrings, NoImplicitPrelude, RecordWildCards, LambdaCase
   ghc-options:  -fno-warn-missing-signatures
   other-modules:       Option, Utils, VCloud.Namespace, VCloud.Prelude, VCloud.PayloadMapper
   build-depends:       base >=4.8 && <4.9
+                     , aeson
                      , base-prelude
                      , bytestring
                      , containers
@@ -27,10 +28,12 @@ executable vcloud
                      , http-client
                      , http-client-tls
                      , lens
-                     , optparse-applicative
+                     , optparse-generic
                      , transformers
                      , text
+                     , unix
                      , wreq
                      , xml-conduit
                      , xml-hamlet
                      , xml-html-conduit-lens
+                     , yaml

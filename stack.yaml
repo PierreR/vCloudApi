@@ -3,4 +3,8 @@ packages:
 - '.'
 extra-deps:
 - xml-html-conduit-lens-0.3.2.1
-resolver: lts-5.1
+- optparse-generic-1.1.0
+resolver: lts-5.8
+nix:
+  enable: true
+  packages: [glpk, pcre, zlib]
