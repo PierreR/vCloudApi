@@ -21,12 +21,11 @@ pass  : pass
 appId : x1zz1ecb-af39-41d3-ac9c-21deecb4e33b
 ```
 
-== Supported actions
+=== Supported actions
 
 - revertToCurrentSnapshot
 - createSnapshot
 
-
-== Current limitation
+=== Notes
 
 - The executable only queries within one vApp. To query multiple vApps you will need to define multiple .env-$zone file.
