@@ -21,6 +21,7 @@ executable vcloud
   other-modules:       Option, Utils, VCloud.Namespace, VCloud.Prelude, VCloud.PayloadMapper
   build-depends:       base >=4.8 && <4.9
                      , aeson
+                     , ansi-wl-pprint
                      , base-prelude
                      , bytestring
                      , containers
@@ -28,7 +29,7 @@ executable vcloud
                      , http-client
                      , http-client-tls
                      , lens
-                     , optparse-generic
+                     , optparse-applicative
                      , transformers
                      , text
                      , unix

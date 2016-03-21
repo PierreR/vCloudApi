@@ -4,23 +4,44 @@ module Option (
   , Option(..)
 ) where
 
-import qualified Data.Text as T
+import qualified Data.Text as Text
 import qualified Data.ByteString.Lazy as B
 
 import           Data.Aeson
-import           Options.Generic
+import           Options.Applicative
+import           Text.PrettyPrint.ANSI.Leijen as Exports hiding ((<$>), (<>))
 
 import           VCloud.Prelude
 import           Utils
 
+-- Argument parser
 data CmdOption = CmdOption
-    { zone     :: Maybe FilePath
+    { zone   :: Maybe FilePath
     , vm     :: Text
-    , action   :: String
-    } deriving (Show, Generic)
+    , action :: String
+    } deriving Show
 
-instance ParseRecord CmdOption
+argParser :: Parser CmdOption
+argParser = CmdOption
+    <$> optional (strOption
+        ( long "zone"
+        <> help "Which config file to read (.env-$zone)"))
+    <*> ( Text.pack <$> strOption
+        ( long "vm"
+        <> help "The name of the virtual machine target"))
+    <*> strOption
+        ( long "action"
+        <> help "virtual machine action to perform against the API (ex: revertToCurrentSnapshot)")
 
+cmdOpts :: IO CmdOption
+cmdOpts = execParser $ info (helper <*> argParser)
+        ( fullDesc
+        <> progDescDoc (Just (string "VCloud APIs command line wrapper." <> line <>
+                              dullyellow "Please configure the 'url', 'user', 'pass' and 'appId' in a local yaml file" <> line <>
+                              dullyellow "The file is named '.env' or '.env-$zone' when a zone is specified."))
+        )
+
+-- File config parser
 data FileConfig = FileConfig
     { url  :: String
     , user :: Text
@@ -39,7 +60,7 @@ data Option = Option
 
 getOption :: IO Option
 getOption = do
-  CmdOption {..} <- getRecord "VCloud APIs command line wrapper.\nThe configuration is read from a .env file"
+  CmdOption {..} <- cmdOpts
   let fp_suffix = maybe mempty (mappend "-") zone
       fp_name = "./.env" <> fp_suffix
   FileConfig {..} <- loadYamlFile fp_name

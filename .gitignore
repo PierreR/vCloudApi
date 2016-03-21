@@ -5,3 +5,4 @@ TAGS
 *.chi
 *.chs.h
 .stack-work/
+.env*
