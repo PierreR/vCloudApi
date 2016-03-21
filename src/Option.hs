@@ -1,51 +1,57 @@
-module Option where
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+module Option (
+    option
+  , Option(..)
+) where
 
-import qualified Data.ByteString.Char8 as BC
-import qualified Data.Text             as Text
+import qualified Data.Text as T
+import qualified Data.ByteString.Lazy as B
 
-import           Options.Applicative
+import           Data.Aeson
+import           Options.Generic
 
 import           VCloud.Prelude
+import           Utils
 
-data Options = Options
+data Option' = Option'
+    { zone   :: Maybe String
+    , url    :: Maybe String
+    , user   :: Maybe Text
+    , pass   :: Maybe Text
+    , appId  :: Maybe String
+    , vm     :: Maybe Text
+    , action :: Maybe String
+    } deriving (Eq, Ord, Show, Generic)
+
+instance ParseRecord Option'
+instance FromJSON Option'
+
+instance Monoid Option' where
+   mempty  = mempty
+   mappend (Option' a b c d e f g)
+           (Option' a' b' c' d' e' f' g') = Option' (a<|>a') (b<|>b') (c<|>c') (d<|>d') (e<|>e') (f<|>f') (g<|>g')
+
+data Option = Option
     { vCloudURL  :: String
-    , vCloudUser :: ByteString
-    , vCloudPass :: ByteString
+    , vCloudUser :: Text
+    , vCloudPass :: Text
     , vAppId     :: String
     , vmName     :: Text
     , vmAction   :: String
-    }
+    } deriving (Eq, Show)
 
-options :: Parser Options
-options = Options
-    <$> strOption
-        ( long "vCloudURL"
-        <> short 'h'
-        <> help "VCloud base URL"
-        <> value "https://c.irisnet.be")
-    <*> ( BC.pack <$> strOption
-        ( long "user"
-        <> short 'u'
-        <> help "Your user name and org ex.: myuser@cirb-test"))
-    <*> ( BC.pack <$> strOption
-        ( long "password"
-        <> short 'p'
-        <> help "Your password"))
-    <*> strOption
-        ( long "vAppId"
-        <> short 'q'
-        <> help "vApp id (such as 'f1ce1ecb-af39-41d3-ac9c-21deecb4e23d')")
-    <*> ( Text.pack <$> strOption
-        ( long "vmName"
-        <> short 'n'
-        <> help "virtual machine name (such as 'saltsyndic')"))
-    <*> strOption
-        ( long "vmAction"
-        <> short 'a'
-        <> help "virtual machine action to perform against the API (ex: revertToCurrentSnapshot)")
-
-cmdOpts :: IO Options
-cmdOpts = execParser $ info (helper <*> options)
-        ( fullDesc
-        <> progDesc "VCloud APIs command line wrapper"
-        )
+option :: IO Option
+option = do
+  cmd_opt <- getRecord "VCloud APIs command line wrapper.\nThe configuration is read from a .env file"
+  let fp_suffix = "" --maybe mempty (mappend "-") (zone cmd_opt)
+      fp_name = "./.env" <> fp_suffix
+  file_opt <- loadYamlFile fp_name
+  let Option' {..} = cmd_opt <> file_opt
+      msg x = "Field '" <> x <> "' not set either on the command line or inside '" <> fp_name <> "' config file."
+  -- return $ Option mempty mempty mempty mempty mempty mempty
+  Option <$> maybe (error $ msg "url") return url
+         <*> maybe (error $ msg "user") return user
+         <*> maybe (error $ msg "pass") return pass
+         <*> maybe (error $ msg "appId") return appId
+         <*> maybe (error $ msg "vm") return vm
+         <*> maybe (error $ msg "action") return action
