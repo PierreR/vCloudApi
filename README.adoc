@@ -13,7 +13,7 @@ vcloud [--zone ARG] --vm ARG --action ARG
 ```
 vcloud --vm pgserver --action createSnapshot
 ```
-with a configuration file '.env':
+with a configuration file `.env`:
 ```
 url   : "https://vcloud.com"
 user  : "user@dcr"
