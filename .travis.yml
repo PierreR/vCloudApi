@@ -20,7 +20,7 @@ before_install:
   - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
 
 script:
- - stack $ARGS --no-nix --no-terminal --install-ghc test --haddock
+ - stack $ARGS --no-nix --no-terminal --install-ghc test --no-haddock
 
 branches:
   only:
