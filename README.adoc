@@ -5,13 +5,20 @@ image:https://travis-ci.org/PierreR/vCloudApi.svg?branch=master ["Build Status",
 .Basic usage:
 
 ```
-vcloud [-h|--vCloudURL ARG] (-u|--user ARG) (-p|--password ARG)
-       (-q|--vAppId ARG) (-n|--vmName ARG) (-a|--vmAction ARG)
+vcloud [--zone ARG] --vm ARG --action ARG
+
 ```
 
 .Example:
 ```
-vcloud -h 'https://c.vcloud.com' -u username -p pass -q c1ce1ecb-af39-41d3-ac9c-21deecb4e33b -n pgserver -a createSnapshot
+vcloud --vm pgserver --action createSnapshot
+```
+with a configuration file '.env':
+```
+url   : "https://vcloud.com"
+user  : "user@dcr"
+pass  : pass
+appId : x1zz1ecb-af39-41d3-ac9c-21deecb4e33b
 ```
 
 == Supported actions
@@ -22,4 +29,4 @@ vcloud -h 'https://c.vcloud.com' -u username -p pass -q c1ce1ecb-af39-41d3-ac9c-
 
 == Current limitation
 
-- The executable only queries within one vApp. You specify the vAppId with the `-q` parameter.
+- The executable only queries within one vApp. To query multiple vApps you will need to define multiple .env-$zone file.
