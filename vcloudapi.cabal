@@ -3,11 +3,13 @@
 
 name:                vcloudapi
 version:             0.1.2.0
+license:             BSD3
 license-file:        LICENSE
 author:              Pierre Radermecker
 maintainer:          pierrer@pi3r.be
--- copyright:
--- category:
+copyright:           2016 Pierre Radermecker
+stability:           Experimental
+category:            Utility, Machine Provisioning
 build-type:          Simple
 -- extra-source-files:
 cabal-version:       >=1.10
